@@ -11,7 +11,7 @@ using UserManagementMicroservice.Models;
 
 namespace UserManagementMicroservice.Controllers
 {
-    [Route("user/[controller]/[action]")]
+    [Route("user/[controller]/[action]")]  
     [ApiController]
     public class UsersController : ControllerBase
     {
