@@ -7,7 +7,7 @@ on:
   # pull_request:
   #   branches:
   #     - [master]
-  # workflow_dispatch: # 允許手動觸發
+  workflow_dispatch: # 允許手動觸發
 
 jobs:
   detect-changes:
