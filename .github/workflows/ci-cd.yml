@@ -3,10 +3,10 @@ name: CI-CD Pipeline
 on:
   push:
     branches:
-      - main
+      - [master]
   pull_request:
     branches:
-      - main
+      - [master]
   workflow_dispatch: # 允許手動觸發
 
 jobs:
@@ -35,8 +35,6 @@ jobs:
           if grep -q "^ShareModel/" changed_files.txt; then
             echo "apigateway=true" >> $GITHUB_OUTPUT
             echo "bug=true" >> $GITHUB_OUTPUT
-            echo "custominfo=true" >> $GITHUB_OUTPUT
-            echo "file=true" >> $GITHUB_OUTPUT
             echo "user=true" >> $GITHUB_OUTPUT
             echo "sharemodel=true" >> $GITHUB_OUTPUT
           else
