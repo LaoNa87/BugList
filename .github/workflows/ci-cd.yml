@@ -11,12 +11,12 @@ on:
 
 jobs:
   detect-changes:
-    runs-on: self-hosted
+    runs-on: self-hosted # Windows 自託管 Runner
     outputs:
       apigateway: ${{ steps.set-outputs.outputs.apigateway }}
-      bug: ${{ steps.set-outputs.outputs.bug }}
+      biglist: ${{ steps.set-outputs.outputs.biglist }}
       sharemodel: ${{ steps.set-outputs.outputs.sharemodel }}
-      user: ${{ steps.set-outputs.outputs.user }}
+      usermanagement: ${{ steps.set-outputs.outputs.usermanagement }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,48 +25,50 @@ jobs:
 
       - name: Detect changed services
         id: set-outputs
+        shell: powershell
         run: |
           # 檢查變動檔案
-          git diff --name-only HEAD^ HEAD > changed_files.txt
-          echo "Changed files:"
-          cat changed_files.txt
+          git diff --name-only HEAD^ HEAD | Out-File -FilePath changed_files.txt -Encoding utf8
+          Write-Host "Changed files:"
+          Get-Content changed_files.txt
+
+          # 初始化輸出
+          $apigateway = "false"
+          $biglist = "false"
+          $usermanagement = "false"
+          $sharemodel = "false"
 
           # 若 ShareModel 有變動，則所有服務都需要重新建置
-          if grep -q "^ShareModel/" changed_files.txt; then
-            echo "apigateway=true" >> $GITHUB_OUTPUT
-            echo "bug=true" >> $GITHUB_OUTPUT
-            echo "user=true" >> $GITHUB_OUTPUT
-            echo "sharemodel=true" >> $GITHUB_OUTPUT
-          else
+          if (Select-String -Path changed_files.txt -Pattern "^ShareModel/" -Quiet) {
+            $apigateway = "true"
+            $biglist = "true"
+            $usermanagement = "true"
+            $sharemodel = "true"
+          } else {
             # 檢測 ApiGateway 是否有變動
-            if grep -q "^ApiGateway/" changed_files.txt; then
-              echo "apigateway=true" >> $GITHUB_OUTPUT
-            else
-              echo "apigateway=false" >> $GITHUB_OUTPUT
-            fi
+            if (Select-String -Path changed_files.txt -Pattern "^ApiGateway/" -Quiet) {
+              $apigateway = "true"
+            }
+            # 檢測 BigList 是否有變動
+            if (Select-String -Path changed_files.txt -Pattern "^BigList/" -Quiet) {
+              $biglist = "true"
+            }
+            # 檢測 UserManagementMicroservice 是否有變動
+            if (Select-String -Path changed_files.txt -Pattern "^UserManagementMicroservice/" -Quiet) {
+              $usermanagement = "true"
+            }
+          }
 
-            # 檢測 Bug 是否有變動
-            if grep -q "^BigList/" changed_files.txt; then
-              echo "bug=true" >> $GITHUB_OUTPUT
-            else
-              echo "bug=false" >> $GITHUB_OUTPUT
-            fi
-
-            # 檢測 User 是否有變動
-            if grep -q "^UserManagementMicroservice/" changed_files.txt; then
-              echo "user=true" >> $GITHUB_OUTPUT
-            else
-              echo "user=false" >> $GITHUB_OUTPUT
-            fi
-
-            # ShareModel 本身不部署
-            echo "sharemodel=false" >> $GITHUB_OUTPUT
-          fi
+          # 將輸出寫入 GITHUB_OUTPUT
+          "apigateway=$apigateway" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "biglist=$biglist" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "usermanagement=$usermanagement" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "sharemodel=$sharemodel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
   build-and-deploy-apigateway:
     needs: detect-changes
     if: needs.detect-changes.outputs.apigateway == 'true'
-    runs-on: self-hosted # 使用本地自託管 Runner
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -97,9 +99,9 @@ jobs:
           Start-WebSite -Name "ApiGateway"
         shell: powershell
 
-  build-and-deploy-bug:
+  build-and-deploy-biglist:
     needs: detect-changes
-    if: needs.detect-changes.outputs.bug == 'true'
+    if: needs.detect-changes.outputs.biglist == 'true'
     runs-on: self-hosted
     steps:
       - name: Checkout code
@@ -114,26 +116,26 @@ jobs:
         run: dotnet restore BigList/BigList.csproj
 
       - name: Build
-        run: dotnet build BigList/CustoBigListmer.csproj --configuration Release --no-restore
+        run: dotnet build BigList/BigList.csproj --configuration Release --no-restore
 
       - name: Test
         run: dotnet test BigList/BigList.csproj --no-build --verbosity normal
         continue-on-error: true
 
       - name: Publish
-        run: dotnet publish BigList/BigList.csproj --configuration Release --output ./publish/BugList
+        run: dotnet publish BigList/BigList.csproj --configuration Release --output ./publish/BigList
 
       - name: Deploy to IIS
         run: |
           Stop-WebSite -Name "TestBugList" -ErrorAction SilentlyContinue
           Remove-Item -Path "C:\inetpub\wwwroot\TestBugList\*" -Recurse -Force -ErrorAction SilentlyContinue
-          Copy-Item -Path "./publish/BugList/*" -Destination "C:\inetpub\wwwroot\TestBugList" -Recurse -Force
+          Copy-Item -Path "./publish/BigList/*" -Destination "C:\inetpub\wwwroot\TestBugList" -Recurse -Force
           Start-WebSite -Name "TestBugList"
         shell: powershell
 
-  build-and-deploy-user:
+  build-and-deploy-usermanagement:
     needs: detect-changes
-    if: needs.detect-changes.outputs.user == 'true'
+    if: needs.detect-changes.outputs.usermanagement == 'true'
     runs-on: self-hosted
     steps:
       - name: Checkout code
@@ -155,12 +157,12 @@ jobs:
         continue-on-error: true
 
       - name: Publish
-        run: dotnet publish UserManagementMicroservice/UserManagementMicroservice.csproj --configuration Release --output ./publish/UserManagement
+        run: dotnet publish UserManagementMicroservice/UserManagementMicroservice.csproj --configuration Release --output ./publish/UserManagementMicroservice
 
       - name: Deploy to IIS
         run: |
           Stop-WebSite -Name "Test" -ErrorAction SilentlyContinue
           Remove-Item -Path "C:\inetpub\wwwroot\Test\*" -Recurse -Force -ErrorAction SilentlyContinue
-          Copy-Item -Path "./publish/UserManagement/*" -Destination "C:\inetpub\wwwroot\Test" -Recurse -Force
+          Copy-Item -Path "./publish/UserManagementMicroservice/*" -Destination "C:\inetpub\wwwroot\Test" -Recurse -Force
           Start-WebSite -Name "Test"
         shell: powershell
