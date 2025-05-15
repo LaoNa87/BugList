@@ -1,0 +1,167 @@
+name: CI-CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      apigateway: ${{ steps.set-outputs.outputs.apigateway }}
+      bug: ${{ steps.set-outputs.outputs.bug }}
+      sharemodel: ${{ steps.set-outputs.outputs.sharemodel }}
+      user: ${{ steps.set-outputs.outputs.user }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # 獲取當前和前一個提交以比較變動
+
+      - name: Detect changed services
+        id: set-outputs
+        run: |
+          # 檢查變動檔案
+          git diff --name-only HEAD^ HEAD > changed_files.txt
+          echo "Changed files:"
+          cat changed_files.txt
+
+          # 若 ShareModel 有變動，則所有服務都需要重新建置
+          if grep -q "^ShareModel/" changed_files.txt; then
+            echo "apigateway=true" >> $GITHUB_OUTPUT
+            echo "bug=true" >> $GITHUB_OUTPUT
+            echo "custominfo=true" >> $GITHUB_OUTPUT
+            echo "file=true" >> $GITHUB_OUTPUT
+            echo "user=true" >> $GITHUB_OUTPUT
+            echo "sharemodel=true" >> $GITHUB_OUTPUT
+          else
+            # 檢測 ApiGateway 是否有變動
+            if grep -q "^ApiGateway/" changed_files.txt; then
+              echo "apigateway=true" >> $GITHUB_OUTPUT
+            else
+              echo "apigateway=false" >> $GITHUB_OUTPUT
+            fi
+
+            # 檢測 Bug 是否有變動
+            if grep -q "^BigList/" changed_files.txt; then
+              echo "bug=true" >> $GITHUB_OUTPUT
+            else
+              echo "bug=false" >> $GITHUB_OUTPUT
+            fi
+
+            # 檢測 User 是否有變動
+            if grep -q "^UserManagementMicroservice/" changed_files.txt; then
+              echo "user=true" >> $GITHUB_OUTPUT
+            else
+              echo "user=false" >> $GITHUB_OUTPUT
+            fi
+
+            # ShareModel 本身不部署
+            echo "sharemodel=false" >> $GITHUB_OUTPUT
+          fi
+
+  build-and-deploy-apigateway:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.apigateway == 'true'
+    runs-on: self-hosted # 使用本地自託管 Runner
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore ApiGateway/ApiGateway.csproj
+
+      - name: Build
+        run: dotnet build ApiGateway/ApiGateway.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test ApiGateway/ApiGateway.csproj --no-build --verbosity normal
+        continue-on-error: true
+
+      - name: Publish
+        run: dotnet publish ApiGateway/ApiGateway.csproj --configuration Release --output ./publish/ApiGateway
+
+      - name: Deploy to IIS
+        run: |
+          Stop-WebSite -Name "ApiGateway" -ErrorAction SilentlyContinue
+          Remove-Item -Path "C:\inetpub\wwwroot\ApiGateway\*" -Recurse -Force -ErrorAction SilentlyContinue
+          Copy-Item -Path "./publish/ApiGateway/*" -Destination "C:\inetpub\wwwroot\ApiGateway" -Recurse -Force
+          Start-WebSite -Name "ApiGateway"
+        shell: powershell
+
+  build-and-deploy-bug:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.bug == 'true'
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore BigList/BigList.csproj
+
+      - name: Build
+        run: dotnet build BigList/CustoBigListmer.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test BigList/BigList.csproj --no-build --verbosity normal
+        continue-on-error: true
+
+      - name: Publish
+        run: dotnet publish BigList/BigList.csproj --configuration Release --output ./publish/BugList
+
+      - name: Deploy to IIS
+        run: |
+          Stop-WebSite -Name "TestBugList" -ErrorAction SilentlyContinue
+          Remove-Item -Path "C:\inetpub\wwwroot\TestBugList\*" -Recurse -Force -ErrorAction SilentlyContinue
+          Copy-Item -Path "./publish/BugList/*" -Destination "C:\inetpub\wwwroot\TestBugList" -Recurse -Force
+          Start-WebSite -Name "TestBugList"
+        shell: powershell
+
+  build-and-deploy-user:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.user == 'true'
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore UserManagementMicroservice/UserManagementMicroservice.csproj
+
+      - name: Build
+        run: dotnet build UserManagementMicroservice/UserManagementMicroservice.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test UserManagementMicroservice/UserManagementMicroservice.csproj --no-build --verbosity normal
+        continue-on-error: true
+
+      - name: Publish
+        run: dotnet publish UserManagementMicroservice/UserManagementMicroservice.csproj --configuration Release --output ./publish/UserManagement
+
+      - name: Deploy to IIS
+        run: |
+          Stop-WebSite -Name "Test" -ErrorAction SilentlyContinue
+          Remove-Item -Path "C:\inetpub\wwwroot\Test\*" -Recurse -Force -ErrorAction SilentlyContinue
+          Copy-Item -Path "./publish/UserManagement/*" -Destination "C:\inetpub\wwwroot\Test" -Recurse -Force
+          Start-WebSite -Name "Test"
+        shell: powershell

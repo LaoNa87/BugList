@@ -1,0 +1,27 @@
+## 環境檔，一打開Visual Studio就會產生
+.vs/
+
+## 套件
+packages/
+
+## 建置檔
+bin/
+obj/
+Debug/
+Release/
+
+## 發布檔
+Publish/
+WebSite/
+
+## 這是每次發布都會動到的檔案
+PublishProfiles/
+*.user
+
+## 這是Database產出的檔案
+匯入結構描述記錄/
+*.dbmdl
+*.jfm
+
+## SonarQube
+.sonarqube/
