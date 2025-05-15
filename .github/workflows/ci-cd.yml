@@ -10,7 +10,7 @@ on:
 
 jobs:
   detect-changes:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     outputs:
       apigateway: ${{ steps.set-outputs.outputs.apigateway }}
       bug: ${{ steps.set-outputs.outputs.bug }}
