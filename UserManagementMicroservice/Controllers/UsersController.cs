@@ -13,7 +13,7 @@ namespace UserManagementMicroservice.Controllers
 {
     [Route("user/[controller]/[action]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController : ControllerBase 
     {
         private readonly IMessageQueue _messageQueue;
         private readonly UserDbContext _context;
