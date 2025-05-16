@@ -96,7 +96,7 @@ jobs:
           Stop-WebSite -Name "Gateway" -ErrorAction SilentlyContinue
           Remove-Item -Path "C:\inetpub\wwwroot\ApiGateway\*" -Recurse -Force -ErrorAction SilentlyContinue
           Copy-Item -Path "./publish/ApiGateway/*" -Destination "C:\inetpub\wwwroot\ApiGateway" -Recurse -Force
-          Start-WebSite -Name "ApiGateway"
+          Start-WebSite -Name "Gateway"
         shell: powershell
 
   build-and-deploy-biglist:
