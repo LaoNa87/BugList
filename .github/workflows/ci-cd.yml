@@ -39,7 +39,7 @@ jobs:
           $sharemodel = "false"
 
           # 若 ShareModel 有變動，則所有服務都需要重新建置
-          if (Select-String -Path changed_files.txt -Pattern "^ShareModels/" -Quiet) {
+          if (Select-String -Path changed_files.txt -Pattern "^SharedModels/" -Quiet) {
             $apigateway = "true"
             $biglist = "true"
             $usermanagement = "true"
