@@ -59,9 +59,6 @@ namespace Biglist.Services
                     await _context.Database.CloseConnectionAsync();
                 }
 
-                
-
-
                 _logger.LogInformation($"Updated user in database: UserId={message.UserId}, UserData={message.UserData}");
             });
 

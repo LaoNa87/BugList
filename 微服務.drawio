@@ -1,4 +1,4 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17" pages="2">
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17" pages="3">
   <diagram id="BgHbbV2Kf1_KORluT4eS" name="RabbitMQ">
     <mxGraphModel dx="1062" dy="619" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -443,6 +443,95 @@
         </mxCell>
         <mxCell id="DpWqWhq6sQEg1hbldd-E-42" value="&lt;span style=&quot;font-size: 15px;&quot;&gt;line-bot-reply-queue&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="1650" y="125" width="150" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="1g6Xtkgaf1e0etCojbLR" name="第3頁">
+    <mxGraphModel dx="904" dy="610" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="oLu-vkekI3azKG42MxOJ-125" value="本機寫好程式碼" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="49" y="20" width="172" height="49" as="geometry" />
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-126" value="用 SourceTree Push 到 GitHub" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="26" y="119" width="218" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-127" value="GitHub Actions 觸發 Workflow" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="34" y="235" width="203" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-128" value="Checkout 代碼" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="53" y="351" width="164" height="49" as="geometry" />
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-129" value="執行 Build / 測試" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="44" y="450" width="183" height="49" as="geometry" />
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-130" value="執行 PowerShell 腳本" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="29" y="549" width="212" height="49" as="geometry" />
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-131" value="清除舊站內容" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="57" y="647" width="156" height="49" as="geometry" />
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-132" value="複製新代碼到 IIS 資料夾" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="20" y="746" width="230" height="49" as="geometry" />
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-133" value="重新啟動 IIS 網站" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="44" y="845" width="182" height="49" as="geometry" />
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-134" value="完成部署" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="73" y="943" width="124" height="49" as="geometry" />
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-135" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=0.99;entryX=0.5;entryY=-0.01;rounded=0;" edge="1" parent="1" source="oLu-vkekI3azKG42MxOJ-125" target="oLu-vkekI3azKG42MxOJ-126">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-136" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;" edge="1" parent="1" source="oLu-vkekI3azKG42MxOJ-126" target="oLu-vkekI3azKG42MxOJ-127">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-137" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;" edge="1" parent="1" source="oLu-vkekI3azKG42MxOJ-127" target="oLu-vkekI3azKG42MxOJ-128">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-138" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;" edge="1" parent="1" source="oLu-vkekI3azKG42MxOJ-128" target="oLu-vkekI3azKG42MxOJ-129">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-139" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=0.99;entryX=0.5;entryY=-0.01;rounded=0;" edge="1" parent="1" source="oLu-vkekI3azKG42MxOJ-129" target="oLu-vkekI3azKG42MxOJ-130">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-140" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=0.98;entryX=0.5;entryY=0;rounded=0;" edge="1" parent="1" source="oLu-vkekI3azKG42MxOJ-130" target="oLu-vkekI3azKG42MxOJ-131">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-141" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;" edge="1" parent="1" source="oLu-vkekI3azKG42MxOJ-131" target="oLu-vkekI3azKG42MxOJ-132">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-142" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=0.99;entryX=0.5;entryY=-0.01;rounded=0;" edge="1" parent="1" source="oLu-vkekI3azKG42MxOJ-132" target="oLu-vkekI3azKG42MxOJ-133">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-143" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=0.98;entryX=0.5;entryY=0;rounded=0;" edge="1" parent="1" source="oLu-vkekI3azKG42MxOJ-133" target="oLu-vkekI3azKG42MxOJ-134">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-144" value="在專案根目錄新增 .github/workflows/ci-cd.yml" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="290" y="80" width="290" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="oLu-vkekI3azKG42MxOJ-145" value="為了讓 GitHub Actions 直接部署到本地 IIS，你需要在本地電腦上運行一個自託管 Runner。&#xa;&#xa;前往 GitHub 儲存庫的 Settings &gt; Actions &gt; Runners。&#xa;點擊 New self-hosted runner，選擇 Windows。" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="290" y="160" width="290" height="120" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
